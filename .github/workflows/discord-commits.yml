@@ -1,0 +1,26 @@
+name: Discord Commits Notification
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  discord-commits:
+    runs-on: ubuntu-latest
+    name: Send Commit Notification to Discord
+    steps:
+      - name: Discord Commits
+        uses: Sniddl/discord-commits@v1.8
+        with:
+          webhook: ${{ secrets.DISCORD_WEBHOOK }}
+          template: "avatar-with-link"
+          include-extras: true
+          exclude-commits: |
+            ^fix:
+            ^feat:
+          include-footer: false
+          note-keywords: |
+            Signed-off-by
+            Co-authored-by
