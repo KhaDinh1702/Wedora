@@ -6,3 +6,7 @@ node_modules/
 
 # GitHub App credentials
 gha-creds-*.json
+
+# Obsidian settings
+.obsidian/
+
