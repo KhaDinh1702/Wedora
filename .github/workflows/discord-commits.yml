@@ -11,16 +11,82 @@ jobs:
     runs-on: ubuntu-latest
     name: Send Commit Notification to Discord
     steps:
-      - name: Discord Commits
-        uses: Sniddl/discord-commits@v1.8
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
-          webhook: ${{ secrets.DISCORD_WEBHOOK }}
-          template: "avatar-with-link"
-          include-extras: true
-          exclude-commits: |
-            ^fix:
-            ^feat:
-          include-footer: false
-          note-keywords: |
-            Signed-off-by
-            Co-authored-by
+          fetch-depth: 0
+
+      - name: Send custom Discord notification
+        shell: python
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          import os
+          import subprocess
+          import json
+          import urllib.request
+
+          webhook_url = os.environ.get("DISCORD_WEBHOOK")
+          if not webhook_url:
+              print("Error: DISCORD_WEBHOOK is not set.")
+              exit(1)
+
+          sha = os.environ.get("GITHUB_SHA")
+          repo = os.environ.get("GITHUB_REPOSITORY")
+          branch = os.environ.get("GITHUB_REF_NAME")
+          server_url = os.environ.get("GITHUB_SERVER_URL")
+
+          # Get commit details
+          commit_msg = subprocess.check_output(["git", "log", "-1", "--pretty=%B"]).decode("utf-8").strip()
+          author_name = subprocess.check_output(["git", "log", "-1", "--pretty=%an"]).decode("utf-8").strip()
+          
+          # Get list of changed files with their status (A: Added, M: Modified, D: Deleted)
+          try:
+              files_changed = subprocess.check_output(["git", "diff-tree", "--no-commit-id", "--name-status", "-r", sha]).decode("utf-8").strip()
+          except Exception as e:
+              files_changed = "Error getting changed files"
+
+          if not files_changed:
+              files_changed = "No files changed"
+
+          # Limit files list size if it is too long for Discord embeds (limit is 1024 chars per field)
+          if len(files_changed) > 950:
+              files_changed = files_changed[:950] + "\n... (truncated)"
+
+          commit_url = f"{server_url}/{repo}/commit/{sha}"
+
+          # Construct Discord embed payload
+          payload = {
+              "embeds": [{
+                  "title": f"🛠️ New Commit in {repo} [{branch}]",
+                  "url": commit_url,
+                  "color": 3447003, # Blue
+                  "author": {
+                      "name": author_name
+                  },
+                  "description": f"**Message:**\n{commit_msg}",
+                  "fields": [
+                      {
+                          "name": "📝 Files Changed",
+                          "value": f"```diff\n{files_changed}\n```",
+                          "inline": False
+                      }
+                  ],
+                  "footer": {
+                      "text": f"Commit SHA: {sha[:7]}"
+                  }
+              }]
+          }
+
+          # Send POST request to Discord Webhook
+          req = urllib.request.Request(
+              webhook_url,
+              data=json.dumps(payload).encode("utf-8"),
+              headers={"Content-Type": "application/json"}
+          )
+          try:
+              with urllib.request.urlopen(req) as response:
+                  print("Notification sent successfully. Status code:", response.getcode())
+          except Exception as e:
+              print("Failed to send notification:", e)
+              exit(1)
