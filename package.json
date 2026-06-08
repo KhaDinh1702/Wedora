@@ -1,0 +1,19 @@
+{
+  "name": "wedora-root",
+  "private": true,
+  "scripts": {
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.5"
+  },
+  "lint-staged": {
+    "frontend/**/*.{js,jsx,ts,tsx}": [
+      "npm --prefix frontend run lint --if-present"
+    ],
+    "backend/**/*.{js,ts}": [
+      "npm --prefix backend run lint --if-present"
+    ]
+  }
+}
