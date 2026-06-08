@@ -9,4 +9,14 @@ gha-creds-*.json
 
 # Obsidian settings
 .obsidian/
+Notes/
 
+# Flutter / Dart ignores
+.dart_tool/
+**/build/
+**/ios/.symlinks/
+**/.flutter-plugins
+**/.flutter-plugins-dependencies
+**/.pub-cache/
+**/.pub/
+**/__pycache__/
