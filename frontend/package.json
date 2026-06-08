@@ -1,0 +1,9 @@
+{
+  "name": "wedora-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "echo 'Building frontend...'"
+  }
+}
