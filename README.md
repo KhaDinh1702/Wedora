@@ -13,7 +13,7 @@ To enable the Gemini CLI workflow, you must add your Gemini API Key as a reposit
 1. Go to your repository settings: **Settings > Secrets and variables > Actions**.
 2. Click **New repository secret**.
 3. Name: `GEMINI_API_KEY`
-4. Value: `AIzaSyDFtycbSup0jAqpIqEa0FluXJbMu1bEyLs` (or your preferred key)
+4. Value: `YOUR_GEMINI_API_KEY`
 5. Save the secret.
 
 ### Usage
