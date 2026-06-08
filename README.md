@@ -1,22 +1,14 @@
 # Wedora
 
-Wedora project setup with automated Gemini CLI reviews.
+Wedora is a full-stack web application project.
 
-## GitHub Actions - Gemini CLI Assistant
+## Project Structure
 
-This repository is configured with Gemini CLI to perform automated code reviews on pull requests and respond to issue comments.
+- **frontend/**: Frontend client application.
+- **backend/**: Backend API and server-side logic (configured for Cloudflare Workers).
 
-### Setup
+## Tech Stack
 
-To enable the Gemini CLI workflow, you must add your Gemini API Key as a repository secret:
-
-1. Go to your repository settings: **Settings > Secrets and variables > Actions**.
-2. Click **New repository secret**.
-3. Name: `GEMINI_API_KEY`
-4. Value: `YOUR_GEMINI_API_KEY`
-5. Save the secret.
-
-### Usage
-
-- **Pull Request Review**: Any new pull request or update will automatically trigger a review by Gemini.
-- **Interactive Assistance**: Mention `@gemini-cli` in any issue or pull request comment followed by your request (e.g. `@gemini-cli explain this code change`).
+- **Frontend**: React, Tailwind CSS
+- **Backend**: Node.js, Cloudflare Workers
+- **Database**: Cloudflare D1 / KV / D1 Database (or preferred database)
