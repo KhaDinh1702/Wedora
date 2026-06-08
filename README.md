@@ -1,0 +1,2 @@
+# Wedora
+AI Weeding planner
