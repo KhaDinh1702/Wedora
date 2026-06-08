@@ -25,11 +25,18 @@ jobs:
           import subprocess
           import json
           import urllib.request
+          import urllib.error
 
           webhook_url = os.environ.get("DISCORD_WEBHOOK")
           if not webhook_url:
-              print("Error: DISCORD_WEBHOOK is not set.")
+              print("Error: DISCORD_WEBHOOK is not set in GitHub Secrets.")
               exit(1)
+
+          # Auto-clean the webhook URL: remove '/github' suffix if present
+          if webhook_url.endswith("/github"):
+              webhook_url = webhook_url[:-7]
+          elif "/github?" in webhook_url:
+              webhook_url = webhook_url.replace("/github?", "?")
 
           sha = os.environ.get("GITHUB_SHA")
           repo = os.environ.get("GITHUB_REPOSITORY")
@@ -37,19 +44,25 @@ jobs:
           server_url = os.environ.get("GITHUB_SERVER_URL")
 
           # Get commit details
-          commit_msg = subprocess.check_output(["git", "log", "-1", "--pretty=%B"]).decode("utf-8").strip()
-          author_name = subprocess.check_output(["git", "log", "-1", "--pretty=%an"]).decode("utf-8").strip()
+          try:
+              commit_msg = subprocess.check_output(["git", "log", "-1", "--pretty=%B"]).decode("utf-8").strip()
+              author_name = subprocess.check_output(["git", "log", "-1", "--pretty=%an"]).decode("utf-8").strip()
+          except Exception as e:
+              print("Error getting commit log:", e)
+              commit_msg = "Unknown commit message"
+              author_name = "Unknown author"
           
-          # Get list of changed files with their status (A: Added, M: Modified, D: Deleted)
+          # Get list of changed files
           try:
               files_changed = subprocess.check_output(["git", "diff-tree", "--no-commit-id", "--name-status", "-r", sha]).decode("utf-8").strip()
           except Exception as e:
+              print("Error running git diff-tree:", e)
               files_changed = "Error getting changed files"
 
           if not files_changed:
               files_changed = "No files changed"
 
-          # Limit files list size if it is too long for Discord embeds (limit is 1024 chars per field)
+          # Limit files list size to fit inside Discord's 1024 char embed limit
           if len(files_changed) > 950:
               files_changed = files_changed[:950] + "\n... (truncated)"
 
@@ -82,11 +95,19 @@ jobs:
           req = urllib.request.Request(
               webhook_url,
               data=json.dumps(payload).encode("utf-8"),
-              headers={"Content-Type": "application/json"}
+              headers={"Content-Type": "application/json", "User-Agent": "Mozilla/5.0"}
           )
+          
           try:
               with urllib.request.urlopen(req) as response:
                   print("Notification sent successfully. Status code:", response.getcode())
+          except urllib.error.HTTPError as e:
+              print("HTTP Error details:", e.code, e.reason)
+              try:
+                  print("Discord Response:", e.read().decode("utf-8"))
+              except Exception:
+                  pass
+              exit(1)
           except Exception as e:
               print("Failed to send notification:", e)
               exit(1)
