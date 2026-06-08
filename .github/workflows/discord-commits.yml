@@ -71,7 +71,7 @@ jobs:
           # Construct Discord embed payload
           payload = {
               "embeds": [{
-                  "title": f"🛠️ New Commit in {repo} [{branch}]",
+                  "title": f"New Commit in {repo} [{branch}]",
                   "url": commit_url,
                   "color": 3447003, # Blue
                   "author": {
@@ -80,7 +80,7 @@ jobs:
                   "description": f"**Message:**\n{commit_msg}",
                   "fields": [
                       {
-                          "name": "📝 Files Changed",
+                          "name": "Files Changed",
                           "value": f"```diff\n{files_changed}\n```",
                           "inline": False
                       }
