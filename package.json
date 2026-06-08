@@ -1,6 +1,10 @@
 {
   "name": "wedora-root",
   "private": true,
+  "workspaces": [
+    "frontend",
+    "backend"
+  ],
   "scripts": {
     "prepare": "husky"
   },
