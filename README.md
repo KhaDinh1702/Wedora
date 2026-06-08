@@ -12,3 +12,5 @@ Wedora is a full-stack web application project.
 - **Frontend**: React, Tailwind CSS
 - **Backend**: Node.js, Cloudflare Workers
 - **Database**: Cloudflare D1 / KV / D1 Database (or preferred database)
+- **Notifications**: Integrated with Discord Channel for automated commit alerts
+
