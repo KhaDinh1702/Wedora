@@ -14,10 +14,10 @@
   },
   "lint-staged": {
     "frontend/**/*.{js,jsx,ts,tsx}": [
-      "npm --prefix frontend run lint --if-present"
+      "pnpm --filter frontend exec npm run lint --if-present"
     ],
     "backend/**/*.{js,ts}": [
-      "npm --prefix backend run lint --if-present"
+      "pnpm --filter backend exec npm run lint --if-present"
     ]
   }
 }
