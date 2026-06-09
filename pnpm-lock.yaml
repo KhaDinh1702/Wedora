@@ -15,8 +15,6 @@ importers:
         specifier: ^15.2.5
         version: 15.5.2
 
-  backend: {}
-
   frontend:
     dependencies:
       next:

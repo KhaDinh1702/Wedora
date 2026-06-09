@@ -3,6 +3,7 @@ import React from 'react';
 export default function Page() {
   // Biến này được khai báo nhưng không dùng đến, ESLint sẽ bắt được lỗi và chặn commit
   const unusedVariable = "Tôi là biến rác để test Husky!";
+  const horny = "wtffff!?";
 
   return (
     <main className="flex min-h-screen flex-col items-center justify-center p-24 bg-neutral-950 text-neutral-100">
